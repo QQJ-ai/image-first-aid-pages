@@ -38,3 +38,54 @@ body.has-images{padding-bottom:106px}body.has-images .setting-summary{font-size:
 }
 @media(max-width:359px){.intro-description{font-size:12px}.tool-card strong{font-size:11px}#bench-description{font-size:11px;max-width:145px}.preview-toolbar>.text-button{font-size:12px}.file-toolbar .text-button{font-size:12px}.stat-meta{font-size:11px}.zoom-toolbar button{font-size:11px;padding:7px 4px}.result-size-cell{padding:6px}.stat-card{padding:10px 7px}.stat-card strong{font-size:23px}}
 .mobile-settings{display:none}.settings{scroll-margin-top:18px}@media(max-width:620px){body.has-images .mobile-settings{display:inline-flex;align-items:center;justify-content:center;min-width:52px;min-height:46px;flex:none;padding:10px 8px;font-size:13px}body.has-images .action-copy{display:none}body.has-images .process-actions{gap:8px}body.has-images .process-button{flex:1;min-width:0}body.has-images .process-actions:has(.mobile-download:not([hidden]))>.mobile-settings{flex:none;min-width:52px}}
+
+/* v2.1: direct image inspection, image clipboard and public image URLs. */
+.preview-toolbar{flex-wrap:wrap;gap:10px}
+.preview-quick-actions{display:flex;align-items:center;gap:4px;margin-left:auto}
+.preview-quick-actions>.text-button{min-height:44px;white-space:nowrap}
+#preview-image[role=button]{cursor:zoom-in}
+#preview-image[role=button]:focus-visible{outline:3px solid var(--palette-indigo);outline-offset:5px}
+.result-thumb-button{flex:none;display:flex;align-items:center;justify-content:center;align-self:flex-start;min-width:56px;min-height:56px;width:56px;height:56px;border:1px solid #dbe2f2;border-radius:8px;background-color:#f4f7ff;overflow:hidden;cursor:zoom-in}
+.result-thumb-button:hover{border-color:#9ea6ed;box-shadow:0 0 0 3px #4d4fdb0e}
+.result-thumb-button .result-thumb{display:block;width:100%;height:100%;object-fit:contain}
+.result-row .copy-result{min-height:44px;white-space:nowrap;padding:9px 12px;font-size:13px}
+.result-row .result-actions{flex-wrap:wrap;justify-content:flex-end}
+.public-upload-note{font-size:12px;line-height:1.8;margin:12px 0 3px;color:var(--muted)}
+.public-image-controls{width:100%;flex:0 0 100%;border:1px solid #dce3f5;border-radius:9px;background:linear-gradient(110deg,#f2fbfa,#f5f5ff);padding:12px 13px;margin-top:5px;min-width:0}
+.public-url-label{display:block;font-size:12px;line-height:1.7;color:#314666;margin-bottom:6px}
+.public-image-urlbox{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.public-image-urlbox input{flex:1;min-width:150px;width:100%;min-height:44px;border:1px solid #d3dcee;border-radius:6px;background:#fff;color:#2e4775;padding:10px 11px;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;text-overflow:ellipsis}
+.public-image-urlbox input:focus{outline:2px solid #4d96db66;border-color:var(--palette-blue)}
+.public-image-urlbox .secondary,.public-image-urlbox .text-button{min-height:44px;white-space:nowrap;padding:9px 11px;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.public-image-status{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.public-image-status>span{font-size:12px;line-height:1.8;flex:1;min-width:140px;overflow-wrap:anywhere}
+.public-image-status>.secondary{min-height:44px;white-space:nowrap;font-size:12px}
+.public-url-progress{color:#526b91}
+.public-url-error{color:#9a4f32}
+.zoom-heading>div{min-width:0;flex:1}
+.zoom-heading h2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zoom-image-actions{margin-left:auto}
+#zoom-copy-image{border:1px solid #cbd4f1;background:#f2f4ff;color:var(--accent)}
+@media(max-width:1000px){.result-row .result-text{flex-basis:calc(100% - 68px)}.result-row>.result-actions{padding-left:68px;width:100%;justify-content:flex-start}}
+@media(max-width:620px){
+ .preview-toolbar{gap:7px}
+ .preview-quick-actions{gap:0}
+ .preview-quick-actions .text-button{font-size:12px;padding:8px 6px;gap:5px}
+ .preview-quick-actions .text-button svg{width:15px;height:15px}
+ .result-thumb-button{width:52px;height:52px;min-width:52px;min-height:52px}
+ .result-row .result-text{flex-basis:calc(100% - 60px)}
+ .result-row>.result-actions{padding-left:0;gap:7px;margin-top:3px;width:100%;justify-content:flex-end}
+ .result-row .copy-result,.result-row>.result-actions .text-button,.download-result{font-size:12px}
+ .public-image-controls{padding:10px 11px;margin-top:4px}
+ .public-image-urlbox{gap:6px}
+ .public-image-urlbox input{flex-basis:100%;font-size:13px;min-height:46px}
+ .public-image-urlbox .secondary,.public-image-urlbox .text-button{font-size:12px}
+ .public-image-status{gap:8px}
+ .public-upload-note{font-size:12px}
+ .zoom-toolbar{flex-wrap:wrap;gap:5px}
+ .zoom-image-actions{margin-left:auto}
+ .zoom-toolbar>div[aria-label="大图打码工具"]:has(button:not([hidden])){width:100%;justify-content:flex-end;border-top:1px solid #e0e5f3}
+ .zoom-toolbar>div[aria-label="大图打码工具"]:not(:has(button:not([hidden]))){display:none}
+ .zoom-heading h2{font-size:13px}
+}
+@media(max-width:380px){.preview-quick-actions{margin-left:0;width:100%;justify-content:flex-end}.preview-quick-actions>.text-button{font-size:13px}.result-row>.result-actions{justify-content:space-between}.result-row .copy-result,.download-result{padding:9px 8px}}
