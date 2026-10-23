@@ -1,71 +1,86 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="图片压缩、改尺寸、格式转换、截图打码，一站搞定。清楚对比处理前后的文件大小，轻松下载分享。">
-  <meta name="theme-color" content="#4d4fdb"><title>图片急救站 · 给图片减负，给生活提速</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="图片压缩到指定大小、调整尺寸、格式转换、截图打码。选图即可开始，清楚对比处理前后的大小，单张或批量下载。">
+  <meta name="theme-color" content="#4d4fdb">
+  <title>图片急救站 · 压缩、改尺寸、转格式、打码</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css?v=2.0.0">
 </head>
 <body>
+<a class="skip-link" href="#workbench">跳到图片处理区</a>
 <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
- <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
- <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/></symbol>
- <symbol id="i-compress" viewBox="0 0 24 24"><path d="M8 3v5H3m18 0h-5V3M3 16h5v5m8 0v-5h5M3 3l5 5M21 3l-5 5M3 21l5-5m13 5-5-5"/></symbol>
- <symbol id="i-resize" viewBox="0 0 24 24"><rect x="3" y="8" width="13" height="13" rx="2"/><path d="M8 3h13v13M13 11l8-8M15 3h6v6"/></symbol>
- <symbol id="i-convert" viewBox="0 0 24 24"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></symbol>
- <symbol id="i-redact" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h3v3H7zm7 3h3v3h-3zM7 16h3m4-7h3"/></symbol>
- <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/></symbol>
- <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
- <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5h16v-5"/></symbol>
- <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
- <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
- <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
- <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
- <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/></symbol>
+  <symbol id="i-compress" viewBox="0 0 24 24"><path d="M8 3v5H3m18 0h-5V3M3 16h5v5m8 0v-5h5M3 3l5 5M21 3l-5 5M3 21l5-5m13 5-5-5"/></symbol>
+  <symbol id="i-resize" viewBox="0 0 24 24"><rect x="3" y="8" width="13" height="13" rx="2"/><path d="M8 3h13v13M13 11l8-8M15 3h6v6"/></symbol>
+  <symbol id="i-convert" viewBox="0 0 24 24"><path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4"/></symbol>
+  <symbol id="i-redact" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h3v3H7zm7 3h3v3h-3zM7 16h3m4-7h3"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5h16v-5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></symbol>
+  <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M10.5 7.5v6m-3-3h6"/></symbol>
 </defs></svg>
 <header class="site-header"><div class="header-inner">
- <a class="brand" href="#" aria-label="图片急救站首页"><span class="brand-mark"><svg><use href="#i-plus"/></svg></span><span>图片急救站<span class="brand-en">IMAGE FIRST AID</span></span></a>
- <nav aria-label="主导航"><a class="nav-active" href="#tools">图片工具</a><a href="#how">使用指南</a><a href="#questions">常见问题</a></nav>
- <span class="header-privacy"><span class="status-dot"></span>图片小一点，分享快一点</span>
+  <a class="brand" href="#" aria-label="图片急救站首页"><span class="brand-mark"><svg aria-hidden="true"><use href="#i-plus"/></svg></span><span>图片急救站<small>IMAGE FIRST AID</small></span></a>
+  <div class="header-note"><span class="status-dot"></span>免费使用 · 无水印 · 无需注册</div>
+  <nav aria-label="主导航"><a href="#questions">使用帮助 <span aria-hidden="true">↗</span></a></nav>
 </div></header>
 <main>
- <section class="hero" aria-labelledby="hero-title"><div class="hero-copy"><div class="eyebrow"><span></span> 给图片的一点小小照顾</div>
- <h1 id="hero-title">图片的小问题，<br>在这里<span class="teal">轻松搞定</span><span class="title-dot">。</span></h1>
- <p>太大、尺寸不对、格式不合适？<br class="mobile-br">四个小工具，让每张图片刚刚好。</p>
- <div class="hero-benefits"><span><svg><use href="#i-check"/></svg>免费使用</span><span><svg><use href="#i-check"/></svg>前后对比</span><span><svg><use href="#i-check"/></svg>即用即走</span></div>
- </div><div class="hero-art" aria-hidden="true">
- <span class="art-orbit orbit-one"></span><span class="art-orbit orbit-two"></span><span class="art-spark">✳</span>
- <div class="back-picture"><span>BEFORE</span><div class="mini-landscape"></div><p>有点重的旅行照片.jpg</p></div>
- <div class="front-picture"><span class="image-tag"><i></i> 状态：轻盈</span><svg class="landscape" viewBox="0 0 300 190"><defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#d7f5f5"/><stop offset="1" stop-color="#edf0ff"/></linearGradient></defs><rect width="300" height="190" rx="8" fill="url(#sky)"/><circle cx="227" cy="49" r="24" fill="#4ddbd9"/><path d="m0 154 88-124 88 124 54-83 70 86v33H0z" fill="#4db9db"/><path d="m49 84 39-54 40 57-23-10-16 9-17-12z" fill="#f6f7ff"/><path d="M0 142q79-41 150 4t150 6v38H0z" fill="#4d96db"/><path d="M0 173q93-40 183 0t117-6v23H0z" fill="#4d4fdb"/><path d="m142 149 37 41h-51l-5-34z" fill="#6f4ddb"/></svg><div class="picture-footer"><span>风景依旧，负担少一点。</span><span>✦</span></div></div>
- <div class="floating-chip"><span class="chip-icon"><svg><use href="#i-compress"/></svg></span><span>小一点，轻松一点<small>给图片减负中</small></span><span class="chip-check">✓</span></div>
- </div></section>
- <section class="tools-section" id="tools" aria-label="选择图片工具"><div class="section-top"><h2>今天，图片需要什么帮助？</h2><span>小问题，一站解决 <span class="tiny-cross">✚</span></span></div>
- <div class="tool-grid" role="tablist" aria-label="图片处理方式">
- <button class="tool-card active" role="tab" aria-selected="true" aria-controls="workbench" id="tab-compress" data-mode="compress"><span class="tool-icon mint"><svg><use href="#i-compress"/></svg></span><span><strong>图片压缩 <em>常用</em></strong><small>体积小一点，清晰不掉线</small></span><svg class="tool-arrow"><use href="#i-arrow"/></svg></button>
- <button class="tool-card" role="tab" aria-selected="false" aria-controls="workbench" id="tab-resize" data-mode="resize"><span class="tool-icon peach"><svg><use href="#i-resize"/></svg></span><span><strong>调整尺寸</strong><small>头像、封面，尺寸刚刚好</small></span><svg class="tool-arrow"><use href="#i-arrow"/></svg></button>
- <button class="tool-card" role="tab" aria-selected="false" aria-controls="workbench" id="tab-convert" data-mode="convert"><span class="tool-icon lavender"><svg><use href="#i-convert"/></svg></span><span><strong>格式转换</strong><small>JPG、PNG、WebP 自由换</small></span><svg class="tool-arrow"><use href="#i-arrow"/></svg></button>
- <button class="tool-card" role="tab" aria-selected="false" aria-controls="workbench" id="tab-redact" data-mode="redact"><span class="tool-icon blue"><svg><use href="#i-redact"/></svg></span><span><strong>隐私打码</strong><small>遮住小秘密，分享更放心</small></span><svg class="tool-arrow"><use href="#i-arrow"/></svg></button>
- </div></section>
- <section class="workbench" id="workbench" role="tabpanel" aria-labelledby="tab-compress">
- <div class="bench-heading"><div><svg id="bench-icon"><use href="#i-compress"/></svg><h2 id="bench-title">图片压缩</h2><span id="bench-description">轻装上阵，分享不费劲</span></div><span class="local-label"><svg><use href="#i-compress"/></svg> 大小变化，一眼看清</span></div>
- <div class="bench-body"><div class="editor-main">
- <div class="dropzone" id="dropzone"><div class="upload-art"><div class="upload-image"><svg><use href="#i-image"/></svg></div><span class="upload-plus">+</span><span class="upload-decoration">✦</span></div><h3>把图片交给我</h3><p>拖拽图片到这里，或直接按 Ctrl+V / ⌘+V 粘贴</p><button class="primary choose-files" id="choose-files"><svg><use href="#i-plus"/></svg>选择图片</button><p class="file-hint">支持 JPG、PNG、WebP、GIF、BMP · 单张不超过 20 MB</p><div class="sample-line">想先看看效果？<button id="try-sample">试用示例图片 <span>↗</span></button></div></div>
- <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" hidden>
- <div class="loaded-state" id="loaded-state" hidden><div class="file-toolbar"><span id="file-count"></span><div><button class="text-button" id="add-files">＋ 添加图片</button><button class="text-button muted" id="clear-files">清空</button></div></div><p class="add-more-hint">继续添加：拖入图片，或按 Ctrl+V / ⌘+V 粘贴</p><div class="preview-stage" id="preview-stage"><div class="preview-image-wrap" id="preview-wrap"><img id="preview-image" alt="当前图片预览"><canvas id="redaction-canvas" aria-label="在图片上按住并拖动，框选需要遮挡的区域" hidden></canvas></div><button id="preview-badge" class="preview-badge" disabled>原图预览</button></div><div class="image-details"><strong id="current-name"></strong><span id="current-meta"></span></div><div class="size-comparison" id="size-comparison" aria-live="polite" aria-atomic="true" hidden><div class="stat-card"><span class="stat-label" id="before-label">压缩前</span><strong id="size-before">—</strong><span class="stat-meta" id="before-meta">原始文件大小</span></div><div class="stat-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></div><div class="stat-card"><span class="stat-label" id="after-label">压缩后</span><strong id="size-after">—</strong><span class="stat-meta" id="after-meta">压缩完成后显示</span></div></div><div id="size-change" class="size-change" hidden></div><div class="thumbnail-list" id="thumbnail-list" aria-label="已选择的图片"></div><div class="redact-help" id="redact-help" hidden><span>在图片上拖动，框选需要遮住的地方</span><div><button id="undo-redaction" class="text-button">撤销</button><button id="clear-redactions" class="text-button">清除全部</button></div></div></div>
- <div class="results" id="results" hidden><div class="results-heading"><h3><span>✓</span> 处理完成</h3><button class="text-button" id="download-all">全部下载（ZIP）<svg><use href="#i-download"/></svg></button></div><div id="result-list"></div></div>
- </div><aside class="settings" aria-label="处理设置"><div class="settings-title"><h3>处理设置</h3><button class="text-button muted" id="reset-settings">重置</button></div>
- <div id="compress-settings"><label class="field-label" for="quality">画质与体积 <span id="quality-label">80%</span></label><input id="quality" type="range" min="10" max="100" value="80"><div class="range-labels"><span>更小体积</span><span>更高画质</span></div><div class="preset-buttons"><button data-quality="50">极致瘦身</button><button data-quality="80" class="selected">均衡推荐</button><button data-quality="95">高清优先</button></div></div>
- <div id="resize-settings" hidden><div class="field-label">目标尺寸 <span>像素 px</span></div><div class="dimension-grid"><label>宽度<input type="number" id="resize-width" value="1200" min="1" max="12000" inputmode="numeric"></label><span>×</span><label>高度<input type="number" id="resize-height" value="800" min="1" max="12000" inputmode="numeric"></label></div><label class="checkbox-label"><input type="checkbox" id="aspect-lock" checked>锁定原图比例</label><div class="preset-buttons resize-presets"><button data-scale="0.25">25%</button><button data-scale="0.5">50%</button><button data-scale="1">原尺寸</button></div><p class="setting-note">批量处理时，锁定比例将按目标宽度缩放每张图片。</p></div>
- <div id="redact-settings" hidden><div class="redact-tip"><svg><use href="#i-redact"/></svg><strong>框住，就藏好了。</strong><p>用不透明色块遮住姓名、地址和聊天内容。每张图片可单独框选。</p></div><p class="setting-note">下载的图片会直接覆盖所选区域。建议预览确认后再分享。</p></div>
- <div class="format-field"><label class="field-label" for="output-format">输出格式 <span class="format-recommend" id="format-recommend">推荐 WebP</span></label><select id="output-format"><option value="image/webp">WebP · 体积更小</option><option value="image/jpeg">JPG · 通用好分享</option><option value="image/png">PNG · 保留透明背景</option></select><p id="format-note" class="setting-note">支持透明背景，适合网页和日常分享。</p></div>
- <div class="setting-divider"></div><div class="setting-summary"><span>已选择</span><strong id="selection-summary">0 张图片</strong></div><button class="primary process-button" id="process-button" disabled><svg><use href="#i-spark"/></svg><span id="process-label">开始压缩</span><svg class="process-arrow"><use href="#i-arrow"/></svg></button><p class="button-note" id="button-note">先选几张图片，我们马上开始</p>
- <div class="privacy-note"><svg><use href="#i-compress"/></svg><div><strong>大小变化，清清楚楚</strong><p>选图后查看原始大小，处理完成后对比结果和节省比例。</p></div></div>
- </aside></div><div class="bench-foot"><span><svg><use href="#i-check"/></svg> 一次最多 10 张图片</span><span><svg><use href="#i-check"/></svg> 不加水印</span><span><svg><use href="#i-check"/></svg> 无需注册工具账号</span><span class="bench-foot-last">小工具，大帮忙。</span></div>
- </section>
- <section class="how-section" id="how"><div class="section-top"><h2>三步，给图片松松绑</h2><span>不用学，直接用</span></div><div class="step-grid"><article><span>01</span><div><h3>选一张图片</h3><p>拖进来、点选，或直接粘贴截图。</p></div></article><article><span>02</span><div><h3>调成你想要的样子</h3><p>选择工具和参数，剩下的交给急救站。</p></div></article><article><span>03</span><div><h3>下载，继续你的生活</h3><p>单张保存或打包带走，轻松收工。</p></div></article></div></section>
- <section id="questions" class="faq-section"><div><span class="eyebrow">GOOD TO KNOW</span><h2>你可能还想知道</h2><p>关于图片的这些小事。</p></div><div class="faq-items"><details><summary>压缩前后的文件大小在哪里看？<span>＋</span></summary><p>选择图片后，预览下方会显示原始文件大小。点击“开始压缩”，就能看到压缩后的实际大小和节省比例。多张图片可以逐张切换查看，结果列表也会列出每张图片的前后大小。更改参数后，需要重新处理以得到新的结果。</p></details><details><summary>为什么有些图片压缩后变化不大？<span>＋</span></summary><p>原图可能已经经过压缩。可适当降低画质，或切换 WebP 格式；PNG 使用无损编码，画质滑块不会影响它。压缩模式下，同格式输出比原图更大时会保留原文件。</p></details><details><summary>GIF、透明图片和打码有什么要注意的？<span>＋</span></summary><p>GIF 导出为静态图片，不保留动画。JPG 不支持透明背景，透明区域会填充白色；PNG 和 WebP 可保留透明背景。隐私打码使用实心色块覆盖，请先预览下载结果。暂不支持 HEIC、SVG 和 PDF。单张最多 20 MB，单边最多 12000 像素、总像素最多 4000 万；每批最多 10 张、合计不超过 100 MB。</p></details></div></section>
+  <section class="intro" aria-labelledby="hero-title"><div><p class="eyebrow">日常图片，一站处理</p><h1 id="hero-title">选好图片，<span>轻松处理。</span></h1><p class="intro-description">压缩大小、调整尺寸、转换格式、遮挡隐私。处理前后，清楚对比。</p></div><ol class="quick-steps" aria-label="使用步骤"><li><span>1</span>选择图片</li><li><span>2</span>调整设置</li><li><span>3</span>下载结果</li></ol></section>
+  <section id="tools" class="tools-section" aria-label="选择图片工具">
+    <div class="tool-grid" role="tablist" aria-label="图片处理方式">
+      <button type="button" class="tool-card active" role="tab" aria-selected="true" aria-controls="workbench" id="tab-compress" data-mode="compress"><span class="tool-icon mint"><svg aria-hidden="true"><use href="#i-compress"/></svg></span><span><strong>图片压缩</strong><small>减小文件，便于上传</small></span><span class="tool-indicator" aria-hidden="true"></span></button>
+      <button type="button" class="tool-card" role="tab" aria-selected="false" aria-controls="workbench" id="tab-resize" data-mode="resize"><span class="tool-icon blue"><svg aria-hidden="true"><use href="#i-resize"/></svg></span><span><strong>调整尺寸</strong><small>按像素或比例缩放</small></span><span class="tool-indicator" aria-hidden="true"></span></button>
+      <button type="button" class="tool-card" role="tab" aria-selected="false" aria-controls="workbench" id="tab-convert" data-mode="convert"><span class="tool-icon indigo"><svg aria-hidden="true"><use href="#i-convert"/></svg></span><span><strong>格式转换</strong><small>JPG / PNG / WebP</small></span><span class="tool-indicator" aria-hidden="true"></span></button>
+      <button type="button" class="tool-card" role="tab" aria-selected="false" aria-controls="workbench" id="tab-redact" data-mode="redact"><span class="tool-icon violet"><svg aria-hidden="true"><use href="#i-redact"/></svg></span><span><strong>隐私打码</strong><small>框选遮住敏感内容</small></span><span class="tool-indicator" aria-hidden="true"></span></button>
+    </div>
+  </section>
+  <section class="workbench" id="workbench" role="tabpanel" aria-labelledby="tab-compress" tabindex="-1">
+    <div class="bench-heading"><div><svg id="bench-icon" aria-hidden="true"><use href="#i-compress"/></svg><h2 id="bench-title">图片压缩</h2></div><span id="bench-description">选择图片，查看原始大小后开始压缩</span></div>
+    <section id="feedback" class="feedback" role="status" aria-live="polite" hidden><div><strong id="feedback-title"></strong><ul id="feedback-details"></ul></div><button type="button" id="dismiss-feedback" class="icon-button" aria-label="关闭提示"><svg aria-hidden="true"><use href="#i-close"/></svg></button></section>
+    <div class="bench-body">
+      <div class="editor-main">
+        <div class="dropzone" id="dropzone"><span class="upload-symbol"><svg aria-hidden="true"><use href="#i-upload"/></svg></span><h3>添加需要处理的图片</h3><p class="desktop-upload-hint">拖拽到这里，或按 <kbd>Ctrl</kbd> + <kbd>V</kbd> / <kbd>⌘</kbd> + <kbd>V</kbd> 粘贴</p><p class="mobile-upload-hint">从相册或文件中选择，支持一次添加多张</p><button type="button" class="primary choose-files" id="choose-files"><svg aria-hidden="true"><use href="#i-plus"/></svg>选择图片</button><p class="file-hint">JPG、PNG、WebP、GIF、BMP<br>每次最多 10 张 · 单张不超过 20 MB</p><button type="button" class="text-button sample-button" id="try-sample">没有图片？试用示例 <span aria-hidden="true">↗</span></button></div>
+        <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" hidden>
+        <div class="loaded-state" id="loaded-state" hidden>
+          <div class="file-toolbar"><strong id="file-count"></strong><div><button type="button" class="text-button" id="add-files"><svg aria-hidden="true"><use href="#i-plus"/></svg>添加</button><button type="button" class="text-button muted" id="clear-files">清空</button></div></div>
+          <div class="preview-toolbar"><div class="preview-switch" role="group" aria-label="切换预览"><button type="button" id="preview-original" aria-pressed="true">原图</button><button type="button" id="preview-result" aria-pressed="false" disabled>处理后</button></div><button type="button" class="text-button" id="zoom-preview"><svg aria-hidden="true"><use href="#i-zoom"/></svg>放大查看</button></div>
+          <div class="preview-stage" id="preview-stage"><div class="preview-image-wrap" id="preview-wrap"><img id="preview-image" alt="当前图片预览"><canvas id="redaction-canvas" aria-label="按住并拖动以框选遮挡区域，可点击放大查看进行精细操作" hidden></canvas></div><span id="preview-badge" class="preview-badge">原图预览</span></div>
+          <div class="image-details"><strong id="current-name"></strong><span id="current-meta"></span></div>
+          <p id="current-warning" class="inline-warning" hidden></p>
+          <div class="size-comparison" id="size-comparison" aria-live="polite" aria-atomic="true" hidden><div class="stat-card"><span class="stat-label" id="before-label">压缩前</span><strong id="size-before">—</strong><span class="stat-meta" id="before-meta">原始文件大小</span></div><div class="stat-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></div><div class="stat-card"><span class="stat-label" id="after-label">压缩后</span><strong id="size-after">—</strong><span class="stat-meta" id="after-meta">处理完成后显示实际大小</span></div></div>
+          <div id="size-change" class="size-change" hidden></div>
+          <div class="redact-help" id="redact-help" hidden><span>拖动框选遮挡区域，放大后更方便操作。</span><div><button type="button" id="undo-redaction" class="text-button">撤销上一步</button><button type="button" id="clear-redactions" class="text-button muted">清除遮挡</button></div></div>
+          <div class="thumbnail-list" id="thumbnail-list" aria-label="已选择的图片，点击切换预览"></div>
+          <p class="add-more-hint">还可拖入图片或粘贴截图，继续添加。</p>
+        </div>
+        <section id="processing-progress" class="processing-progress" aria-label="处理进度" aria-live="polite" hidden><div class="progress-heading"><strong id="progress-label">准备处理…</strong><button type="button" id="cancel-processing" class="text-button">停止处理</button></div><div class="progress-track" role="progressbar" aria-label="图片处理进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-bar" class="progress-bar"></div></div><p>已完成的图片可以保留并下载。</p></section>
+        <section class="results" id="results" aria-labelledby="results-title" hidden><div class="results-heading"><div><h3 id="results-title">处理结果</h3><p id="results-summary"></p></div><div class="result-actions"><button type="button" id="retry-failed" class="text-button" hidden>重试失败项</button><button type="button" class="secondary" id="download-all"><svg aria-hidden="true"><use href="#i-download"/></svg>下载全部 ZIP</button></div></div><div id="result-list"></div></section>
+      </div>
+      <aside class="settings" id="processing-settings" aria-label="处理设置" tabindex="-1">
+        <div class="settings-title"><h3><span class="step-label">02</span>处理设置</h3><button type="button" class="text-button muted" id="reset-settings">恢复默认</button></div>
+        <div id="compress-settings" class="setting-group"><label class="field-label" for="compression-strategy">压缩方式</label><select id="compression-strategy"><option value="quality">按画质压缩</option><option value="target">压到指定大小</option></select><div id="target-settings" class="target-settings" hidden><label class="field-label" for="target-size">每张图片不超过</label><div class="target-inputs"><input id="target-size" type="number" value="200" min="1" step="1" inputmode="decimal" aria-describedby="target-size-note"><label class="sr-only" for="target-unit">目标大小单位</label><select id="target-unit"><option value="KB">KB</option><option value="MB">MB</option></select></div><label class="checkbox-label"><input id="allow-target-resize" type="checkbox" checked><span>必要时缩小尺寸，尽量达到目标</span></label><p id="target-size-note" class="setting-note">达到目标后显示实际大小。透明图片建议选择 WebP；PNG 可能无法达到较小目标。</p></div></div>
+        <div id="resize-settings" class="setting-group" hidden><div class="field-label">目标尺寸 <span>像素 px</span></div><div class="dimension-grid"><label for="resize-width">宽度<input type="number" id="resize-width" value="1200" min="1" max="12000" inputmode="numeric"></label><span aria-hidden="true">×</span><label for="resize-height">高度<input type="number" id="resize-height" value="800" min="1" max="12000" inputmode="numeric"></label></div><label class="checkbox-label"><input type="checkbox" id="aspect-lock" checked><span>保持每张图片的原始比例</span></label><div class="preset-buttons resize-presets"><button type="button" data-scale="0.25">缩到 25%</button><button type="button" data-scale="0.5">缩到 50%</button><button type="button" data-scale="1">原尺寸</button></div><p id="resize-summary" class="setting-note">保持比例时，所有图片按目标宽度缩放。</p></div>
+        <div id="redact-settings" class="setting-group" hidden><div class="redact-tip"><svg aria-hidden="true"><use href="#i-redact"/></svg><strong>框选需要遮住的内容</strong><p>在预览上拖动，使用实心色块遮挡。内容较小时，点击“放大查看”。</p></div><p class="setting-note">批量打码需要逐张框选。下载前请切换到“处理后”确认遮挡效果。</p></div>
+        <div class="format-field setting-group"><label class="field-label" for="output-format">输出格式 <span id="format-recommend" class="format-recommend">默认保持原格式</span></label><select id="output-format"><option value="original" selected>保持原格式</option><option value="image/jpeg">JPG · 通用格式</option><option value="image/png">PNG · 保留透明背景</option><option value="image/webp">WebP · 兼顾透明与体积</option></select><p id="format-note" class="setting-note">保留原图格式。GIF 和 BMP 将转为静态 PNG。</p></div>
+        <div id="quality-controls" class="setting-group"><label class="field-label" for="quality">输出画质 <span id="quality-label">80</span></label><input id="quality" type="range" min="10" max="100" value="80" aria-describedby="quality-note"><div class="range-labels"><span>更小体积</span><span>更清晰</span></div><div class="preset-buttons"><button type="button" data-quality="50">更小文件</button><button type="button" data-quality="80" class="selected">均衡推荐</button><button type="button" data-quality="95">更高画质</button></div><p class="setting-note" id="quality-note">画质数值不是缩小比例。实际大小在处理完成后显示。</p><button type="button" id="use-webp" class="text-button format-shortcut" hidden>改用 WebP，尝试减小体积 <span aria-hidden="true">↗</span></button></div>
+        <div class="process-actions" id="process-actions"><div class="action-copy"><div class="setting-summary"><span>已选择</span><strong id="selection-summary">0 张图片</strong></div><p class="button-note" id="button-note">选择图片后即可开始</p></div><a class="secondary mobile-settings" href="#processing-settings" aria-label="跳到处理设置">设置</a><button type="button" class="primary process-button" id="process-button" disabled><svg aria-hidden="true"><use href="#i-spark"/></svg><span id="process-label">开始压缩</span><svg class="process-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button><button type="button" class="secondary mobile-download" id="mobile-download-button" hidden><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载结果</span></button></div>
+        <p class="settings-footnote">各工具从原图生成结果。更改设置后重新处理，上次结果仍可下载。</p>
+      </aside>
+    </div>
+    <div class="bench-foot"><span><svg aria-hidden="true"><use href="#i-check"/></svg>不添加水印</span><span>最多 10 张 · 总大小不超过 100 MB</span><a href="#questions">格式与限制 <span aria-hidden="true">↗</span></a></div>
+  </section>
+  <section id="questions" class="faq-section" aria-labelledby="faq-title"><div class="faq-intro"><p class="eyebrow">使用帮助</p><h2 id="faq-title">几个实用小提示</h2><p>少一点试错，更快拿到结果。</p></div><div class="faq-items"><details><summary>画质 80，是压到原来的 80% 吗？<span aria-hidden="true">＋</span></summary><p>不是。它是图片编码时的画质参数，不能直接换算成文件大小。需要小于 200 KB、1 MB 等上传限制时，选择“压到指定大小”。PNG 使用无损编码，画质参数不会影响它。</p></details><details><summary>压到指定大小，一定能达到吗？<span aria-hidden="true">＋</span></summary><p>程序会尝试降低画质，勾选相应选项后也会缩小尺寸。极小目标、透明图和无损 PNG 仍可能无法达标，结果会明确提示，请以处理后的实际大小为准。</p></details><details><summary>该选哪个格式？哪些图片支持？<span aria-hidden="true">＋</span></summary><p>上传材料通常选 JPG；透明图片选 PNG 或 WebP，JPG 会把透明区域填成白色。支持 JPG、PNG、WebP、GIF、BMP，GIF 导出为静态图片，不保留动画。暂不支持 HEIC、AVIF、SVG、PDF；单张最大 20 MB，单边最多 12000 像素，总像素最多 4000 万；整批图片合计最多 6000 万像素、100 MB。</p></details></div></section>
 </main>
-<footer><a class="footer-brand" href="#"><span>✚</span> 图片急救站</a><span>给图片减负，给生活提速。</span><span class="footer-right">MADE FOR YOUR EVERYDAY <span>✳</span></span></footer>
+<footer><a class="footer-brand" href="#">✚ 图片急救站</a><span>让每张图片，刚刚好。</span><span class="version-label">v2.0</span></footer>
+<dialog id="zoom-dialog" class="zoom-dialog" aria-labelledby="zoom-title"><div class="zoom-heading"><div><h2 id="zoom-title">大图预览</h2><p>可滚动查看长图；打码时，先放大，再点“框选打码”。</p></div><button type="button" id="zoom-close" class="icon-button" aria-label="关闭大图预览"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="zoom-toolbar"><div role="group" aria-label="缩放图片"><button type="button" id="zoom-out" aria-label="缩小图片">−</button><span id="zoom-level" aria-live="polite">100%</span><button type="button" id="zoom-in" aria-label="放大图片">＋</button></div><div role="group" aria-label="大图打码工具"><button type="button" id="zoom-draw" aria-pressed="false" hidden>框选打码</button><button type="button" id="zoom-undo" hidden>撤销</button><button type="button" id="zoom-clear" hidden>清除</button></div></div><div class="zoom-viewport"><div id="zoom-content" class="zoom-content"><img id="zoom-image" alt="大图预览"><canvas id="zoom-redaction-canvas" aria-label="在大图上按住并拖动，框选需要遮住的区域" hidden></canvas></div></div><p class="zoom-footnote">关闭大图后，可在主预览中撤销上一步或清除遮挡。</p></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<script type="module" src="./app.js"></script>
-</body></html>
+<script type="module" src="./app.js?v=2.0.0"></script>
+</body>
+</html>

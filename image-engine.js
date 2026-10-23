@@ -48,7 +48,7 @@ export async function loadImage(file) {
   if (/\.(?:heic|heif|avif)$/i.test(name) || /image\/(?:heic|heif|avif)/i.test(file.type)) {
     throw new Error('暂不支持 HEIC、HEIF 或 AVIF 图片，请先转换为 JPG、PNG 或 WebP。');
   }
-  await detectImageType(file);
+  const sourceType = await detectImageType(file);
   const url = URL.createObjectURL(file);
   try {
     const image = new Image();
@@ -63,6 +63,7 @@ export async function loadImage(file) {
       id: globalThis.crypto?.randomUUID?.() || `image-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       name,
       file,
+      sourceType,
       width: image.naturalWidth,
       height: image.naturalHeight,
       image,
@@ -116,60 +117,156 @@ function paintRedactions(context, rectangles, width, height) {
   }
 }
 
+/** Resolve the requested format without changing supported source formats. */
+async function resolveOutputType(item, requested) {
+  if (requested !== 'original') return requested;
+  const hints = [item.sourceType, item.mimeType, item.type, item.file.type];
+  for (const hint of hints) {
+    const type = String(hint || '').toLowerCase().split(';')[0].trim();
+    if (OUTPUT_TYPES.has(type)) return type;
+    if (type === 'image/gif' || type === 'image/bmp') return 'image/png';
+  }
+  const detected = await detectImageType(item.file);
+  return OUTPUT_TYPES.has(detected) ? detected : 'image/png';
+}
+
+function checkCancelled(options) {
+  if (typeof options.shouldCancel === 'function' && options.shouldCancel()) {
+    const error = new Error('已停止处理，已完成的图片仍可下载。');
+    error.name = 'AbortError';
+    error.code = 'PROCESS_CANCELLED';
+    throw error;
+  }
+}
+
 /**
- * Produce a new flattened bitmap with browser Canvas. Resizing uses the supplied
- * width/height, preserving the aspect ratio when only one dimension is supplied.
- * Redaction rectangles use normalized source-image coordinates in [0, 1].
- * Newly encoded output has no source metadata, layers, or GIF animation.
- * Same-format compression may return the original file when encoding is larger.
+ * Produce a flattened bitmap. Original-format export keeps JPG, PNG and WebP;
+ * GIF/BMP become PNG. A target size is only meaningful in compression mode.
+ * Target search is bounded and always reports the actual Blob size. It searches
+ * quality first, then optionally reduces dimensions, releasing each canvas
+ * before the next encode. PNG quality is null because its encoder is lossless.
  */
 export async function processImage(item, options = {}) {
   if (!item?.image || !(item.file instanceof Blob)) throw new Error('请先选择并加载图片。');
   const mode = options.mode || 'compress';
-  const type = options.format || 'image/jpeg';
   const quality = options.quality ?? 0.8;
   if (!MODES.has(mode)) throw new Error('请选择有效的图片处理方式。');
-  if (!OUTPUT_TYPES.has(type)) throw new Error('导出格式仅支持 JPG、PNG 和 WebP。');
   if (!Number.isFinite(quality) || quality < 0 || quality > 1) throw new Error('图片质量必须在 0 至 1 之间。');
-  checkDimensions(item.width, item.height);
-  const { width, height } = mode === 'resize' ? resizedDimensions(item, options) : item;
-  checkDimensions(width, height);
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  try {
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('当前浏览器无法处理图片，请使用新版 Chrome、Edge、Safari 或 Firefox。');
-    context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = 'high';
-    // JPEG has no alpha channel; flatten transparent pixels against white.
-    if (type === 'image/jpeg') {
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, width, height);
-    }
-    context.drawImage(item.image, 0, 0, width, height);
-    if (mode === 'redact') paintRedactions(context, options.redactions || [], width, height);
-    const blob = await new Promise((resolve, reject) => {
-      try {
-        canvas.toBlob((value) => value ? resolve(value) : reject(new Error('图片导出失败，可能是内存不足，请尝试更小的图片。')), type, quality);
-      } catch {
-        reject(new Error('图片导出失败，请尝试更小的图片或其他格式。'));
-      }
-    });
-    if (blob.type.toLowerCase() !== type) {
-      throw new Error(`当前浏览器不支持导出 ${EXTENSIONS[type].toUpperCase()} 格式，请选择其他格式。`);
-    }
-    let resultBlob = blob;
-    if (mode === 'compress' && blob.size >= item.file.size && type === await detectImageType(item.file)) {
-      // Compression should never make a same-format file larger.
-      resultBlob = item.file.type === type ? item.file : new Blob([item.file], { type });
-    }
-    return { blob: resultBlob, width, height, name: outputName(item.name, type), type, originalSize: item.file.size };
-  } finally {
-    // Promptly release the large backing store after encoding completes.
-    canvas.width = 0;
-    canvas.height = 0;
+  checkCancelled(options);
+  const type = await resolveOutputType(item, options.format || 'image/jpeg');
+  if (!OUTPUT_TYPES.has(type)) throw new Error('导出格式仅支持 JPG、PNG 和 WebP。');
+  const hasTarget = mode === 'compress' && options.targetBytes !== undefined && options.targetBytes !== null && options.targetBytes !== '';
+  const targetBytes = hasTarget ? Number(options.targetBytes) : undefined;
+  if (hasTarget && (!Number.isSafeInteger(targetBytes) || targetBytes < 1)) {
+    throw new Error('目标文件大小须为大于 0 的整数字节数。');
   }
+  checkDimensions(item.width, item.height);
+  const initial = mode === 'resize' ? resizedDimensions(item, options) : { width: item.width, height: item.height };
+  checkDimensions(initial.width, initial.height);
+  const lossless = type === 'image/png';
+  const minimumQuality = Math.min(quality, 0.1);
+  let smallest;
+
+  async function encode(width, height, requestedQuality) {
+    checkCancelled(options);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    try {
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('当前浏览器无法处理图片，请使用新版 Chrome、Edge、Safari 或 Firefox。');
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
+      if (type === 'image/jpeg') {
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, width, height);
+      }
+      context.drawImage(item.image, 0, 0, width, height);
+      if (mode === 'redact') paintRedactions(context, options.redactions || [], width, height);
+      const blob = await new Promise((resolve, reject) => {
+        try {
+          canvas.toBlob(value => value ? resolve(value) : reject(new Error('图片导出失败，可能是内存不足，请尝试更小的图片。')), type, lossless ? undefined : requestedQuality);
+        } catch {
+          reject(new Error('图片导出失败，请尝试更小的图片或其他格式。'));
+        }
+      });
+      checkCancelled(options);
+      if (blob.type.toLowerCase() !== type) {
+        throw new Error(`当前浏览器不支持导出 ${EXTENSIONS[type].toUpperCase()} 格式，请选择其他格式。`);
+      }
+      const candidate = { blob, width, height, quality: lossless ? null : requestedQuality };
+      if (!smallest || blob.size < smallest.blob.size) smallest = candidate;
+      return candidate;
+    } finally {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  }
+
+  const actualSourceType = mode === 'compress' ? await detectImageType(item.file) : undefined;
+  function originalCandidate() {
+    return {
+      blob: item.file.type === type ? item.file : new Blob([item.file], { type }),
+      width: item.width, height: item.height, quality: null, reusedOriginal: true,
+    };
+  }
+  function finish(candidate) {
+    // A preserved original is allowed only for compression, never for redaction.
+    if (mode === 'compress' && actualSourceType === type && item.file.size <= candidate.blob.size) {
+      candidate = originalCandidate();
+    }
+    return {
+      ...candidate,
+      name: outputName(item.name, type), type, originalSize: item.file.size,
+      targetBytes,
+      targetMet: hasTarget ? candidate.blob.size <= targetBytes : undefined,
+      resized: candidate.width !== item.width || candidate.height !== item.height,
+      reusedOriginal: !!candidate.reusedOriginal,
+    };
+  }
+
+  let width = initial.width;
+  let height = initial.height;
+  // Six dimension levels and eight quality encodes per level are hard limits.
+  const levels = hasTarget && options.allowResize !== false ? 6 : 1;
+  for (let level = 0; level < levels; level += 1) {
+    const high = await encode(width, height, quality);
+    if (!hasTarget || high.blob.size <= targetBytes) return finish(high);
+    let low = high;
+    if (!lossless && minimumQuality < quality) {
+      low = await encode(width, height, minimumQuality);
+      if (low.blob.size <= targetBytes) {
+        let fit = low;
+        let lower = minimumQuality;
+        let upper = quality;
+        for (let step = 0; step < 6; step += 1) {
+          const midpoint = (lower + upper) / 2;
+          const candidate = await encode(width, height, midpoint);
+          if (candidate.blob.size <= targetBytes) { fit = candidate; lower = midpoint; }
+          else upper = midpoint;
+        }
+        return finish(fit);
+      }
+    }
+    // Returning an already small source avoids needless resolution loss.
+    if (actualSourceType === type && item.file.size <= targetBytes) return finish(originalCandidate());
+    if (level + 1 === levels || (width === 1 && height === 1)) break;
+    const scale = Math.max(0.1, Math.min(0.85, Math.sqrt(targetBytes / Math.max(1, low.blob.size)) * 0.92));
+    // Scale the long edge first; very narrow/tall images can still shrink when
+    // the short edge has already reached one pixel. Rounding stays within a pixel.
+    let nextWidth, nextHeight;
+    if (item.width >= item.height) {
+      nextWidth = Math.max(1, Math.floor(width * scale));
+      nextHeight = Math.max(1, Math.round(nextWidth * item.height / item.width));
+    } else {
+      nextHeight = Math.max(1, Math.floor(height * scale));
+      nextWidth = Math.max(1, Math.round(nextHeight * item.width / item.height));
+    }
+    if (nextWidth === width && nextHeight === height) break;
+    width = nextWidth;
+    height = nextHeight;
+  }
+  return finish(smallest);
 }
 
 export function formatBytes(bytes) {
